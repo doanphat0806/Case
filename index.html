@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quan Ly Nhan Vien</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+<h1>Quản lý nhân viên</h1>
+<div >
+    <label for="id">Mã Nhân Viên</label>
+    <input type="number" id="id">
+</div>
+<div>
+    <label for="firstName">Họ</label>
+    <input type="text" id="firstName">
+</div>
+<div>
+    <label for="lastName">Tên</label>
+    <input type="text" id="lastName">
+</div>
+<div>
+    <label for="gioiTinh">Giới tính</label>
+    <input type="text" id="gioiTinh">
+</div>
+<div>
+    <label for="age">Tuổi</label>
+    <input type="text" id="age">
+</div>
+<div class="form-action-buttons">
+    <button onclick="add()">Submit</button>
+    <button onclick="search()">Search</button>
+</div>
+<div>
+    <input type="text" id="searchItem">
+</div>
+<table class="table" id="render">
+    <thead>
+    <tr>
+        <th>Mã Nhân Viên</th>
+        <th>Họ</th>
+        <th>Tên</th>
+        <th>Giới Tính</th>
+        <th>Tuổi</th>
+        <th> Actions</th>
+    </tr>
+    </thead>
+</table>
+<script>
+    class Employee {
+        constructor(id, firstName, lastName, gioiTinh, age) {
+            this.Id = id;
+            this.FirstName = firstName;
+            this.LastName = lastName;
+            this.GioiTinh = gioiTinh;
+            this.Age = age;
+        }
+    }
+
+    let data = [
+    ];
+
+    function add() {
+        let item_id = document.getElementById("id").value;
+        let item_firstName = document.getElementById("firstName").value;
+        let item_lastName = document.getElementById("lastName").value;
+        let item_gioiTinh = document.getElementById("gioiTinh").value;
+        let item_age = document.getElementById("age").value;
+
+        let newItem = new Employee(
+            parseInt(item_id),
+            item_firstName,
+            item_lastName,
+            item_gioiTinh,
+            parseInt(item_age)
+        );
+
+        let index = data.findIndex((employee) => employee.Id === newItem.Id);
+
+        if (index >= 0) {
+            data.splice(index, 1, newItem);
+        } else {
+            data.push(newItem);
+        }
+
+        render();
+        clear();
+    }
+
+    function render() {
+        let table = `<tr>
+                <th>Mã Nhân Viên</th>
+                <th>Họ</th>
+                <th>Tên</th>
+                <th>Giới Tính</th>
+                <th>Tuổi</th>
+                <th> Actions</th>
+            </tr>`;
+
+        for (let i = 0; i < data.length; i++) {
+            table += `<tr>
+                    <th>${data[i].Id}</th>
+                    <th>${data[i].FirstName}</th>
+                    <th>${data[i].LastName}</th>
+                    <th>${data[i].GioiTinh}</th>
+                    <th>${data[i].Age}</th>
+                    <th>
+                        <button style="padding: 8px;background-color: #ee1010;color: white;border: none;cursor: pointer;" onclick="deleteItem(${data[i].Id})">Delete</button>
+                        <button style="padding: 8px;background-color: #ee1010;color: white;border: none;cursor: pointer;" onclick="editItem(${data[i].Id})">Edit</button>
+                    </th>
+                </tr>`;
+        }
+
+        document.getElementById("render").innerHTML = table;
+    }
+
+    function clear() {
+        document.getElementById("id").value = "";
+        document.getElementById("firstName").value = "";
+        document.getElementById("lastName").value = "";
+        document.getElementById("gioiTinh").value = "";
+        document.getElementById("age").value = "";
+    }
+
+    function deleteItem(x) {
+        data = data.filter((employee) => employee.Id !== x);
+        render();
+    }
+
+    function editItem(x) {
+        let employee = data.find((item) => item.Id === x);
+        document.getElementById("id").value = employee.Id;
+        document.getElementById("firstName").value = employee.FirstName;
+        document.getElementById("lastName").value = employee.LastName;
+        document.getElementById("gioiTinh").value = employee.GioiTinh;
+        document.getElementById("age").value = employee.Age;
+    }
+
+    function search() {
+        let search = document.getElementById("searchItem").value;
+
+        if (search) {
+            let searchResult = data.filter(
+                (employee) =>
+                    employee.LastName.toLowerCase().includes(search.toLowerCase())
+            );
+
+            renderSearchResult(searchResult);
+        }
+    }
+
+    function renderSearchResult(searchResult) {
+        let table = `<tr>
+                <th>Mã Nhân Viên</th>
+                <th>Họ</th>
+                <th>Tên</th>
+                <th>Giới Tính</th>
+                <th>Tuổi</th>
+                <th> Actions</th>
+            </tr>`;
+
+        for (let i = 0; i < searchResult.length; i++) {
+            table += `<tr>
+                    <th>${searchResult[i].Id}</th>
+                    <th>${searchResult[i].FirstName}</th>
+                    <th>${searchResult[i].LastName}</th>
+                    <th>${searchResult[i].GioiTinh}</th>
+                    <th>${searchResult[i].Age}</th>
+                    <th>
+                        <button style="padding: 8px;background-color: #ee1010;color: white;border: none;cursor: pointer;" onclick="deleteItem(${searchResult[i].Id})">Delete</button>
+                        <button style="padding: 8px;background-color: #ee1010;color: white;border: none;cursor: pointer;" onclick="editItem(${searchResult[i].Id})">Edit</button>
+                    </th>
+                </tr>`;
+        }
+
+        document.getElementById("render").innerHTML = table;
+    }
+</script>
+</body>
+</html>
